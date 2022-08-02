@@ -1,11 +1,20 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
+import { gql } from '@apollo/client'
 
 import BasicLayout from 'layout/BasicLayout'
 import HeroSection from 'components/HeroSection'
+import client from 'client'
 
-const Home: NextPage = () => {
+interface HomeProps {
+  title: string
+  subtitle: string
+  image: string
+  smallImage: string
+}
+
+const Home: NextPage<HomeProps> = (props) => {
   return (
     <div>
       <Head>
@@ -16,10 +25,10 @@ const Home: NextPage = () => {
 
       <BasicLayout>
         <HeroSection
-          title="Explore, create, share"
-          subtitle="Aliqua adipisicing ullamco pariatur laborum deserunt aliqua dolor anim et sint commodo reprehenderit magna eiusmod."
-          image="hero-img.jpg"
-          smallImage="hero-img-small.jpg"
+          title={props.title}
+          subtitle={props.subtitle}
+          image={props.image}
+          smallImage={props.smallImage}
         />
       </BasicLayout>
 
@@ -37,6 +46,40 @@ const Home: NextPage = () => {
       </footer>
     </div>
   )
+}
+
+export const getStaticProps = async () => {
+  const data = (await client.query({
+    query: gql`
+      query GetHomePage {
+        HomePage(id: "homePage") {
+          _id
+          title {
+            en
+            sk
+          }
+          subtitle {
+            en
+            sk
+          }
+          image {
+            asset {
+              url
+            }
+          }
+        }
+      }
+    `
+  })).data['HomePage']  
+  
+  return {
+    props: {
+      title: data.title.sk,
+      subtitle: data.subtitle.sk,
+      image: data.image.asset.url,
+      smallImage: `${data.image.asset.url}?w=48`
+    }
+  }
 }
 
 export default Home

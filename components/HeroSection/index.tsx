@@ -25,11 +25,11 @@ const HeroSection: FunctionComponent<HeroSectionProps> = ({
   image,
   smallImage
 }) => {
-  const [currentImage, setCurrentImage] = useState(`/images/${smallImage}`)
+  const [currentImage, setCurrentImage] = useState(smallImage)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    fetchImage(`/images/${image}`)
+    fetchImage(image)
   }, [image])
 
   const fetchImage = (src: string) => {

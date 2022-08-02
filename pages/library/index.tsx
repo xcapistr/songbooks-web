@@ -1,12 +1,18 @@
-import { FunctionComponent } from 'react'
+import { NextPage } from 'next'
 import Head from 'next/head'
+import { gql } from '@apollo/client'
 
 import BasicLayout from 'layout/BasicLayout'
 import HeroSection from 'components/HeroSection'
+import client from 'client'
 
-interface LibraryProps {}
+interface LibraryProps {
+    title: string
+    image: string
+    smallImage: string
+}
 
-const Library: FunctionComponent<LibraryProps> = () => {
+const Library: NextPage<LibraryProps> = props => {
   return (
     <div>
       <Head>
@@ -16,15 +22,46 @@ const Library: FunctionComponent<LibraryProps> = () => {
       </Head>
       <BasicLayout>
         <HeroSection
-          title="Library"
+          title={props.title}
           subtitle=""
           small
-          image="library.jpg"
-          smallImage="library-small.jpg"
+          image={props.image}
+          smallImage={props.smallImage}
         />
       </BasicLayout>
     </div>
   )
+}
+
+export const getStaticProps = async () => {
+  const data = (
+    await client.query({
+      query: gql`
+        query GetLibraryPage {
+          Library(id: "library") {
+            _id
+            title {
+              en
+              sk
+            }
+            image {
+              asset {
+                url
+              }
+            }
+          }
+        }
+      `
+    })
+  ).data['Library']
+
+  return {
+    props: {
+      title: data.title.sk,
+      image: data.image.asset.url,
+      smallImage: `${data.image.asset.url}?w=48`
+    }
+  }
 }
 
 export default Library
