@@ -1,5 +1,9 @@
 import styled from 'styled-components'
 
+export const AnchorWrapper = styled.a`
+  width: calc(33% - 12px);
+`
+
 export const Card = styled.div`
   border: 1px solid #ccc;
   border-radius: 10px;
@@ -16,24 +20,26 @@ export const Card = styled.div`
   }
 `
 
-export const BackgroundImageWrapper = styled.div<{ image: string }>`
-  background-image: url('${({ image }) => image}');
-  width: 300px;
+export const BackgroundImageWrapper = styled.div<{ image?: string }>`
+  background-image: url('${({ image }) => image ? image : "/images/songbooks-icon.svg"}');
+  width: 100%;
   height: 200px;
   background-position: center;
-  background-size: cover;
+  background-size: ${({image})=>image ? 'cover' : '50%'};
+  background-color: #ccc;
+  background-repeat: no-repeat;
 `
 
 export const CardBody = styled.div`
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
 
-    & > h3 {
-        margin: 5px 0;
-    }
+  & > h3 {
+    margin: 5px 0;
+  }
 
-    & > p {
-        margin: 5px 0 0;
-    }
+  & > p {
+    margin: 5px 0 0;
+  }
 `

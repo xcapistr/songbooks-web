@@ -1,16 +1,30 @@
-import type { GetStaticProps, NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import { gql } from '@apollo/client'
+import axios from 'axios'
 
 import BasicLayout from 'layout/BasicLayout'
+import BookCard from 'components/BookCard'
 import HeroSection from 'components/HeroSection'
 import apolloClient from 'apolloClient'
 import { List } from './style'
+
+interface Book {
+  id: number
+  name?: string
+  image?: string
+  private?: boolean
+  stars?: number
+  votes?: number
+  ownerName?: string
+  songsCount?: number
+}
 
 interface LibraryProps {
   title: string
   image: string
   smallImage: string
+  books: Book[]
 }
 
 const Library: NextPage<LibraryProps> = props => {
@@ -29,13 +43,26 @@ const Library: NextPage<LibraryProps> = props => {
           image={props.image}
           smallImage={props.smallImage}
         />
-        <List></List>
+        <List>
+          {props.books.map(b => (
+            <BookCard
+              id={b.id}
+              key={b.id}
+              title={b.name}
+              image={b.image}
+              ownerName={b.ownerName}
+              songsCount={b.songsCount}
+            />
+          ))}
+        </List>
       </BasicLayout>
     </div>
   )
 }
 
-export const getStaticProps: GetStaticProps = async ({ locale = 'en' }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale = 'en'
+}) => {
   const data = (
     await apolloClient.query({
       query: gql`
@@ -57,11 +84,20 @@ export const getStaticProps: GetStaticProps = async ({ locale = 'en' }) => {
     })
   ).data['Library']
 
+  const apiUrl = process.env.API_URL
+
+  let books: Book[] = []
+  const response = await axios.get(`${apiUrl}/users/1/books`)
+  if (response.status === 200) {
+    books = response.data
+  }
+
   return {
     props: {
       title: data.title[locale],
       image: data.image.asset.url,
-      smallImage: `${data.image.asset.url}?w=48`
+      smallImage: `${data.image.asset.url}?w=48`,
+      books
     }
   }
 }

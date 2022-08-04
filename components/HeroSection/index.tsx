@@ -8,7 +8,6 @@ import {
   Title,
   Subtitle
 } from './style'
-import Button from 'components/Button'
 
 interface HeroSectionProps {
   title: string
@@ -16,6 +15,7 @@ interface HeroSectionProps {
   small?: boolean
   image: string
   smallImage: string
+  children?: JSX.Element[] | JSX.Element
 }
 
 const HeroSection: FunctionComponent<HeroSectionProps> = ({
@@ -23,7 +23,8 @@ const HeroSection: FunctionComponent<HeroSectionProps> = ({
   subtitle,
   small = false,
   image,
-  smallImage
+  smallImage,
+  children
 }) => {
   const [currentImage, setCurrentImage] = useState(smallImage)
   const [isLoading, setIsLoading] = useState(true)
@@ -48,10 +49,7 @@ const HeroSection: FunctionComponent<HeroSectionProps> = ({
         <Content>
           <Title>{title}</Title>
           {subtitle && <Subtitle>{subtitle}</Subtitle>}
-          <Button
-            title="Go to library"
-            onClick={e => console.log('clicked:', e.target)}
-          />
+          {children}
         </Content>
       </BackdropContainer>
     </HeroWrapper>

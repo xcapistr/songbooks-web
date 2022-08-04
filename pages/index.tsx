@@ -1,10 +1,12 @@
 import type { GetStaticProps, NextPage } from 'next'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Image from 'next/image'
 import { gql } from '@apollo/client'
 
 import BasicLayout from 'layout/BasicLayout'
 import HeroSection from 'components/HeroSection'
+import Button from 'components/Button'
 import apolloClient from 'apolloClient'
 
 interface HomeProps {
@@ -14,7 +16,9 @@ interface HomeProps {
   smallImage: string
 }
 
-const Home: NextPage<HomeProps> = (props) => {
+const Home: NextPage<HomeProps> = props => {
+  const router = useRouter()
+
   return (
     <div>
       <Head>
@@ -29,7 +33,9 @@ const Home: NextPage<HomeProps> = (props) => {
           subtitle={props.subtitle}
           image={props.image}
           smallImage={props.smallImage}
-        />
+        >
+          <Button title="Go to library" onClick={()=>router.push('/library')} />
+        </HeroSection>
       </BasicLayout>
 
       <footer>
