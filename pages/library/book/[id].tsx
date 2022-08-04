@@ -2,10 +2,39 @@ import { GetServerSideProps, NextPage } from 'next/types'
 import Head from 'next/head'
 import axios from 'axios'
 import { MusicalNote } from 'react-ionicons'
+import styled from 'styled-components'
 
 import BasicLayout from 'layout/BasicLayout'
 import HeroSection from 'components/HeroSection'
-import { ContentWrapper, SongsList, SongsListItem } from './style'
+
+const ContentWrapper = styled.div`
+  padding: 40px;
+  max-width: 1024px;
+  margin: 0 auto;
+`
+
+const SongsList = styled.ul`
+  list-style: none;
+  padding: 0;
+`
+
+const SongsListItem = styled.li`
+  border-bottom: 1px solid #ccc;
+  padding: 20px;
+  cursor: pointer;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background-color: #eee;
+  }
+
+  & > span {
+    margin-right: 10px;
+  }
+`
 
 interface Song {
   id: number

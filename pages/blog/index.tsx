@@ -2,12 +2,21 @@ import { FunctionComponent } from 'react'
 import type { GetStaticProps, NextPage } from 'next'
 import Head from 'next/head'
 import { gql } from '@apollo/client'
+import styled from 'styled-components'
 
 import BasicLayout from 'layout/BasicLayout'
 import HeroSection from 'components/HeroSection'
 import PostCard from 'components/PostCard'
 import apolloClient from 'apolloClient'
-import { ListWrapper } from './style'
+
+const ListWrapper = styled.div`
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 40px;
+  max-width: 1024px;
+  margin: 0 auto;
+`
 
 interface BlogProps {
   title: string

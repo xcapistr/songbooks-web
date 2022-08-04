@@ -2,12 +2,21 @@ import type { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import { gql } from '@apollo/client'
 import axios from 'axios'
+import styled from 'styled-components'
 
 import BasicLayout from 'layout/BasicLayout'
 import BookCard from 'components/BookCard'
 import HeroSection from 'components/HeroSection'
 import apolloClient from 'apolloClient'
-import { List } from './style'
+
+const List = styled.div`
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 40px;
+  max-width: 1024px;
+  margin: 0 auto;
+`
 
 interface Book {
   id: number

@@ -2,12 +2,22 @@ import { GetStaticPaths, GetStaticProps, NextPage } from 'next/types'
 import Head from 'next/head'
 import { gql } from '@apollo/client'
 import BlockContent from '@sanity/block-content-to-react'
+import styled from 'styled-components'
 
 import BasicLayout from 'layout/BasicLayout'
 import HeroSection from 'components/HeroSection'
 import apolloClient from 'apolloClient'
 import sanityClient from 'sanityClient'
-import { ContentWrapper } from './style'
+
+const ContentWrapper = styled.div`
+  padding: 40px;
+  max-width: 1024px;
+  margin: 0 auto;
+
+  & p {
+    font-size: 18px;
+  }
+`
 
 interface PostProps {
   title: string
