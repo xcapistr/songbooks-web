@@ -1,11 +1,11 @@
-import type { NextPage } from 'next'
+import type { GetStaticProps, NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import { gql } from '@apollo/client'
 
 import BasicLayout from 'layout/BasicLayout'
 import HeroSection from 'components/HeroSection'
-import client from 'client'
+import apolloClient from 'apolloClient'
 
 interface HomeProps {
   title: string
@@ -48,34 +48,36 @@ const Home: NextPage<HomeProps> = (props) => {
   )
 }
 
-export const getStaticProps = async () => {
-  const data = (await client.query({
-    query: gql`
-      query GetHomePage {
-        HomePage(id: "homePage") {
-          _id
-          title {
-            en
-            sk
-          }
-          subtitle {
-            en
-            sk
-          }
-          image {
-            asset {
-              url
+export const getStaticProps: GetStaticProps = async ({ locale = 'en' }) => {
+  const data = (
+    await apolloClient.query({
+      query: gql`
+        query GetHomePage {
+          HomePage(id: "homePage") {
+            _id
+            title {
+              en
+              sk
+            }
+            subtitle {
+              en
+              sk
+            }
+            image {
+              asset {
+                url
+              }
             }
           }
         }
-      }
-    `
-  })).data['HomePage']  
-  
+      `
+    })
+  ).data['HomePage']
+
   return {
     props: {
-      title: data.title.sk,
-      subtitle: data.subtitle.sk,
+      title: data.title[locale],
+      subtitle: data.subtitle[locale],
       image: data.image.asset.url,
       smallImage: `${data.image.asset.url}?w=48`
     }

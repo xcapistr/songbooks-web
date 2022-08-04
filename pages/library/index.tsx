@@ -1,15 +1,16 @@
-import { NextPage } from 'next'
+import type { GetStaticProps, NextPage } from 'next'
 import Head from 'next/head'
 import { gql } from '@apollo/client'
 
 import BasicLayout from 'layout/BasicLayout'
 import HeroSection from 'components/HeroSection'
-import client from 'client'
+import apolloClient from 'apolloClient'
+import { List } from './style'
 
 interface LibraryProps {
-    title: string
-    image: string
-    smallImage: string
+  title: string
+  image: string
+  smallImage: string
 }
 
 const Library: NextPage<LibraryProps> = props => {
@@ -28,14 +29,15 @@ const Library: NextPage<LibraryProps> = props => {
           image={props.image}
           smallImage={props.smallImage}
         />
+        <List></List>
       </BasicLayout>
     </div>
   )
 }
 
-export const getStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async ({ locale = 'en' }) => {
   const data = (
-    await client.query({
+    await apolloClient.query({
       query: gql`
         query GetLibraryPage {
           Library(id: "library") {
@@ -57,7 +59,7 @@ export const getStaticProps = async () => {
 
   return {
     props: {
-      title: data.title.sk,
+      title: data.title[locale],
       image: data.image.asset.url,
       smallImage: `${data.image.asset.url}?w=48`
     }

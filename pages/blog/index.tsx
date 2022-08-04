@@ -1,18 +1,22 @@
 import { FunctionComponent } from 'react'
+import type { GetStaticProps, NextPage } from 'next'
 import Head from 'next/head'
 import { gql } from '@apollo/client'
 
 import BasicLayout from 'layout/BasicLayout'
 import HeroSection from 'components/HeroSection'
-import client from 'client'
+import PostCard from 'components/PostCard'
+import apolloClient from 'apolloClient'
+import { ListWrapper } from './style'
 
 interface BlogProps {
   title: string
   image: string
   smallImage: string
+  posts: any[]
 }
 
-const Blog: FunctionComponent<BlogProps> = (props) => {
+const Blog: NextPage<BlogProps> = props => {
   return (
     <div>
       <Head>
@@ -27,14 +31,27 @@ const Blog: FunctionComponent<BlogProps> = (props) => {
           image={props.image}
           smallImage={props.smallImage}
         />
+        <ListWrapper>
+          {props.posts.map(p => (
+            <PostCard
+              key={p._id}
+              title={p.title}
+              slug={p.slug}
+              image={p.image}
+              author={p.author}
+              publishedAt={p.publishedAt}
+              categories={p.categories}
+            />
+          ))}
+        </ListWrapper>
       </BasicLayout>
     </div>
   )
 }
 
-export const getStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async ({locale = 'en'}) => {
   const data = (
-    await client.query({
+    await apolloClient.query({
       query: gql`
         query GetBlogPage {
           BlogPage(id: "blogPage") {
@@ -49,16 +66,60 @@ export const getStaticProps = async () => {
               }
             }
           }
+          allPost(sort: { publishedAt: DESC }) {
+            _id
+            title {
+              en
+              sk
+            }
+            slug {
+              current
+            }
+            mainImage {
+              asset {
+                url
+              }
+            }
+            publishedAt
+            author {
+              _id
+              name
+            }
+            categories {
+              _id
+              title {
+                en
+                sk
+              }
+              slug {
+                current
+              }
+            }
+          }
         }
       `
     })
-  ).data['BlogPage']
+  ).data
 
+  const blogPage = data['BlogPage']
+  const posts = data['allPost'].map((p: any) => ({
+    _id: p._id,
+    title: p.title[locale],
+    slug: p.slug.current,
+    image: p.mainImage.asset.url,
+    publishedAt: p.publishedAt,
+    author: p.author.name,
+    categories: p.categories.map((c: any) => ({
+      title: c.title[locale],
+      slug: c.slug.current
+    }))
+  }))
   return {
     props: {
-      title: data.title.sk,
-      image: data.image.asset.url,
-      smallImage: `${data.image.asset.url}?w=48`
+      title: blogPage.title[locale],
+      image: blogPage.image.asset.url,
+      smallImage: `${blogPage.image.asset.url}?w=48`,
+      posts
     }
   }
 }
